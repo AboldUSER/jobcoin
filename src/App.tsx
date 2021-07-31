@@ -1,25 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.css';
+import SignInPage from './pages/sign-in-page';
+import DashboardPage from './pages/dashboard-page';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
+    <QueryClientProvider client={queryClient}>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <Router>
+        <Switch>
+        <Route exact path='/'>
+        <SignInPage />
+        </Route>
+        <Route exact path='/dashboard'>
+        <DashboardPage accountAddress='' />
+        </Route>
+        </Switch>
+        </Router>
     </div>
+    </QueryClientProvider>
   );
 }
 
