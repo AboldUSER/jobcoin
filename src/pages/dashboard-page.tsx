@@ -58,7 +58,7 @@ const DashboardPage = () => {
 
                 <Header />
                 <Fade in={true} timeout={2000}>
-                    <h2>Please Log In</h2>
+                    <h2>Please Sign In</h2>
                 </Fade>
             </div>
         )

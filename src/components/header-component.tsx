@@ -5,9 +5,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import Logo from '../assets/images/logo.png';
 import { UserContext } from '../components/context/address-context-component';
-
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,12 +15,12 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
     },
     appBar: {
-      backgroundColor: '#001554',
+      backgroundColor: '#4C5B87',
       "&.MuiAppBar-positionSticky": {
         margin: "40px 20px 0px 20px",
         width: "calc(100% - 40px)",
         "& .MuiToolbar-root": {
-          color: "'#001554'",
+          color: "'#324376'",
           "& .MuiButtonBase-root": {
             fontSize: 24
           }
@@ -30,15 +30,19 @@ const useStyles = makeStyles((theme: Theme) =>
     menuButton: {
       marginRight: theme.spacing(2),
     },
-    title: {
-      marginLeft: 10,
+    addressTitle: {
+      marginLeft: 15,
     },
     logo: {
       maxWidth: 50,
     },
     toolbarButtons: {
       marginLeft: 'auto',
+    },
+    toolbarItems: {
+      marginTop: 5,
     }
+
   }),
 );
 
@@ -59,7 +63,7 @@ export default function ButtonAppBar() {
 
     await setAddress('');
 
-    await history.push({ pathname: '/' });
+    history.push({ pathname: '/' });
   }
 
   return (
@@ -67,12 +71,17 @@ export default function ButtonAppBar() {
       <AppBar className={classes.appBar} position="static">
         <Toolbar>
           <img src={Logo} alt="logo" className={classes.logo} />
-          <Typography variant="h6" className={classes.title}>
-            JobCoin
+          <Typography variant="h5" className={classes.addressTitle}>
+            Sender App
           </Typography>
           <div className={classes.toolbarButtons}>
-            <Button color="inherit" disabled={logInButtonStatus} onClick={handleClick}>Log In</Button>
-            <Button color="inherit" disabled={logOutButtonStatus} onClick={handleClick}>Log Out</Button>
+            <Grid>{address !== '' &&
+        <Typography className={classes.toolbarItems} >
+        {address} signed in
+      </Typography>
+      }</Grid>
+            <Button color="inherit" disabled={logInButtonStatus} onClick={handleClick}>Sign In</Button>
+            <Button color="inherit" disabled={logOutButtonStatus} onClick={handleClick}>Sign Out</Button>
           </div>
         </Toolbar>
       </AppBar>
