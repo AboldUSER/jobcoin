@@ -1,19 +1,15 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
+import Fade from '@material-ui/core/Fade';
 import TokenBalanceComponent from '../components/token-balance-component';
 import TokenTransferComponent from '../components/token-transfer-component';
-import GraphContainerComponent from '../components/graph-container-component';
+import GraphContainerComponent from '../components/graph/graph-container-component';
 import Header from '../components/header-component';
 import { IAddressApiResponse, fetchAddressData } from '../api/fetchAddressData';
-import { useQuery } from 'react-query';
-import Fade from '@material-ui/core/Fade';
-
-interface IDashboardProps {
-    accountAddress: string;
-}
+import { UserContext } from '../components/context/address-context-component';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -25,61 +21,82 @@ const useStyles = makeStyles((theme: Theme) =>
         gridItem: {
             margin: theme.spacing(4, 'auto'),
         },
+        gridSubItem: {
+            margin: theme.spacing(6, 'auto'),
+        }
     }),
 );
 
-const DashboardPage: React.FC<IDashboardProps> = () => {
-
+const DashboardPage = () => {
 
     const classes = useStyles();
 
-    const location = useLocation();
+    const { address } = React.useContext(UserContext);
 
-    const accountObj = location.state as IDashboardProps;
-
-    const initialAccount = accountObj.accountAddress;
-
-    const [address, setAddress] = React.useState<string>(initialAccount);
-
-
-    const { isLoading, data } = useQuery<IAddressApiResponse | undefined>([`addressData`, address], async () => await fetchAddressData(address));
+    const { isLoading, data, error } = useQuery<IAddressApiResponse | undefined>([`addressData`, address], async () => await fetchAddressData(address));
 
     if (isLoading) {
-        return <span><h2>Loading...</h2></span>
+        return (
+            <div>
+                <Header />
+                <Fade in={true} timeout={500}>
+                    <h2>Checking for credentials</h2>
+                </Fade>
+            </div>
+        )
     }
 
-    const addressBalance = data?.balance
+    if (error) {
+        console.log(error);
 
-    const addressTransactions = (data?.transactions) ? data.transactions : [];
+    }
 
-    return (
-        <div>
-            
-            <Header />
-            <Fade in={true} timeout={2000}>
-            <Container className={classes.root}>
-                <Grid container spacing={3} wrap='wrap'>
-                    <Grid className={classes.gridItem}
-                        item lg={3}
-                    >
-                        <Grid className={classes.gridItem}>
-                            <TokenBalanceComponent accountName={address} balance={addressBalance} />
+    if (!data) {
+
+        return (
+            <div>
+
+                <Header />
+                <Fade in={true} timeout={2000}>
+                    <h2>Please Log In</h2>
+                </Fade>
+            </div>
+        )
+    } else {
+
+        const addressBalance = data?.balance
+
+        const addressTransactions = (data?.transactions) ? data.transactions : [];
+
+        return (
+            <div>
+
+                <Header />
+                <Fade in={true} timeout={2000}>
+                    <Container className={classes.root}>
+                        <Grid container spacing={3} wrap='wrap'>
+                            <Grid className={classes.gridItem}
+                                item lg={3}
+                            >
+                                <Grid >
+                                    <TokenBalanceComponent balance={addressBalance} />
+                                </Grid>
+                                <Grid className={classes.gridSubItem}>
+                                    <TokenTransferComponent accountName={address} />
+                                </Grid>
+                            </Grid>
+                            <Grid
+                                className={classes.gridItem}
+                                item lg={9}
+                            >
+                                <GraphContainerComponent accountName={address} transactions={addressTransactions} />
+                            </Grid>
                         </Grid>
-                        <Grid className={classes.gridItem}>
-                            <TokenTransferComponent accountName={address} />
-                        </Grid>
-                    </Grid>
-                    <Grid
-                        className={classes.gridItem}
-                        item lg={9}
-                    >
-                        <GraphContainerComponent accountName={address} transactions={addressTransactions} />
-                    </Grid>
-                </Grid>
-            </Container>
-            </Fade>
-        </div>
-    )
+                    </Container>
+                </Fade>
+            </div>
+        )
+    }
 }
 
 export default DashboardPage;

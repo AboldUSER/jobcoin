@@ -6,7 +6,8 @@ import Select from '@material-ui/core/Select';
 
 
 interface IDateSelectorProps {
-  updateMonth: (arg: number | unknown) => void
+  updateMonth: (arg: number | unknown) => void;
+  selectedYear: (number | unknown);
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,14 +15,19 @@ const useStyles = makeStyles((theme: Theme) =>
     formControl: {
       marginTop: theme.spacing(3),
       minWidth: 120,
+      margin: 'auto'
     }
   }),
 );
 
-export default function DateSelector({updateMonth}: IDateSelectorProps) {
+export default function MonthSelector({ updateMonth, selectedYear }: IDateSelectorProps) {
+
   const classes = useStyles();
 
   const currentMonth = new Date().getMonth();
+
+  const yearToUse = selectedYear;
+  
 
   const [selectedMonth, setSelectedMonth] = React.useState<{ month: number | unknown }>({
     month: currentMonth
@@ -35,7 +41,19 @@ export default function DateSelector({updateMonth}: IDateSelectorProps) {
     updateMonth(event.target.value);
   };
 
-  console.log(selectedMonth.month + ' date selector');
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+  const monthArray: Number[] = [];
+
+  const currentYear = new Date().getFullYear();
+
+  for (let i = 0; i < 12; ++i) {
+    if (Number(currentYear) !== Number(yearToUse)) {
+      monthArray[i] = i;
+    } else if (currentMonth - i >= 0) {
+      monthArray.push(i)
+    }
+  }
 
   return (
     <div>
@@ -51,20 +69,12 @@ export default function DateSelector({updateMonth}: IDateSelectorProps) {
             id: 'outlined-month-native',
           }}
         >
-          <option value={0}>January</option>
-          <option value={1}>February</option>
-          <option value={2}>March</option>
-          <option value={3}>April</option>
-          <option value={4}>May</option>
-          <option value={5}>June</option>
-          <option value={6}>July</option>
-          <option value={7}>August</option>
-          <option value={8}>September</option>
-          <option value={9}>October</option>
-          <option value={10}>November</option>
-          <option value={11}>December</option>
+          {monthArray.map(month => (
+            <option key={Number(month)} value={Number(month)}>{months[Number(month)]}</option>
+          ))}
         </Select>
       </FormControl>
     </div>
   );
 }
+

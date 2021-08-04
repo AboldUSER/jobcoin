@@ -1,4 +1,3 @@
-import React from 'react';
 import { ITransactionsAPIResponse } from '../api/fetchAddressData';
 
 export interface IBalanceOverTime {
@@ -18,8 +17,10 @@ function TransformTransactionData(accountName: string, transactions: ITransactio
             return { localTimeStamp, toAddress, amount };
         });
 
+        // creates an object that will contain account information per transaction (date of transaction, account balance, and count of transaction)
         let balanceOverTime: IBalanceOverTime[] = [{ date: dates[0].localTimeStamp, balance: parseFloat(dates[0].amount), transactionCount: 1 }];
-
+        
+        // count of the number of total transactions
         const transactionCount: number = dates.length;
 
         // for loop through list of transactions
@@ -33,7 +34,7 @@ function TransformTransactionData(accountName: string, transactions: ITransactio
                     balanceOverTime[elemIndex].balance = newBalance;
                     balanceOverTime[elemIndex].transactionCount += 1;
                 } else { // determines the transaction was a debit (negative value) against balance and adds 1 transaction count
-                    let elemIndex = balanceOverTime.findIndex(elem => elem.date == dates[i].localTimeStamp);
+                    let elemIndex = balanceOverTime.findIndex(elem => elem.date === dates[i].localTimeStamp);
                     let newBalance = balanceOverTime[elemIndex].balance - parseFloat(dates[i].amount);
                     balanceOverTime[elemIndex].balance = newBalance;
                     balanceOverTime[elemIndex].transactionCount += 1

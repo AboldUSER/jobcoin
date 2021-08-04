@@ -1,19 +1,17 @@
 import React from 'react';
-import { useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useQueryClient } from 'react-query';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import { sendTransactionData } from '../api/sendTransactionData';
-import { useQueryClient } from 'react-query';
 
 interface ITokenTransferProps {
     accountName: string;
 }
 
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         minWidth: 275,
         color: '#363533',
@@ -42,40 +40,40 @@ const useStyles = makeStyles((theme) => ({
 
 const TokenTransferComponent = (props: ITokenTransferProps) => {
 
-    const queryClient = useQueryClient();
-
     const classes = useStyles();
 
-    const [transactionInputs, setTransactionInputs] = useState({ 'destAddress': '', 'sendAmount': '' });
+    const queryClient = useQueryClient();
+
+    const [transactionInputs, setTransactionInputs] = React.useState({ 'destAddress': '', 'sendAmount': '' });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value, name } = event.target;
+
         setTransactionInputs({
             ...transactionInputs, [event.target.name]:
                 event.target.value
         });
     }
 
-    function isNumeric(num: any){
+    function isNumeric(num: any) {
         return !isNaN(num)
-      }
+    }
 
     const handleClick = async (event: any) => {
         event.preventDefault();
-        
+
 
         try {
-            const { data: response } = await sendTransactionData(props.accountName, transactionInputs.destAddress, transactionInputs.sendAmount);
+            await sendTransactionData(props.accountName, transactionInputs.destAddress, transactionInputs.sendAmount);
             await queryClient.refetchQueries(['addressData']);
-            setTransactionInputs({ 'destAddress': '', 'sendAmount': '' })
+            setTransactionInputs({ 'destAddress': '', 'sendAmount': '' });
         } catch (err) {
             console.error(err);
             const numberCheck = isNumeric(transactionInputs.sendAmount);
 
-        if (!numberCheck) {
-            alert('Please enter a valid number amount into Send field');
-        } else
-            alert('Not enough funds!');
+            if (!numberCheck) {
+                alert('Please enter a valid number amount into Send field');
+            } else
+                alert('Not enough funds!');
         }
     }
 

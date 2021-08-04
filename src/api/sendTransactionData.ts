@@ -7,8 +7,6 @@ export const sendTransactionData = async (fromAddress: string, toAddress: string
         );
 
         console.log(response);
-
-        return response;
     } catch (err) {
         console.error(err);
     }

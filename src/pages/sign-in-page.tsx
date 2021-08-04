@@ -1,11 +1,11 @@
 import React from 'react';
-import {  makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import SignInComponent from '../components/sign-in-component';
-import JCLogo from '../assets/images/logo.png';
-import { Grid } from '@material-ui/core';
+import Logo from '../assets/images/logo.png';
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         height: "100%",
         display: 'flex',
@@ -15,11 +15,12 @@ const useStyles = makeStyles((theme) => ({
         spacing: 0,
         textAlign: 'center',
         justifyContent: 'center',
-        padding: theme.spacing(20, 0, 20),
+        padding: theme.spacing(5, 0, 0),
         margin: 'auto'
     }, grid: {
         width: "100%",
-        paddingBottom: 2
+        paddingBottom: 2,
+        margin: theme.spacing(3, 0),
     }
 }));
 
@@ -30,10 +31,10 @@ const SignInPage: React.FunctionComponent = (): any => {
     return (
         <Grid container className={classes.root}>
             <Grid className={classes.grid} >
-            <img alt="" src={JCLogo} height='150px' width='150px'/>
+                <img alt="" src={Logo} height='150px' width='150px' />
             </Grid>
             <Grid className={classes.grid}>
-            <SignInComponent />
+                <SignInComponent />
             </Grid>
         </Grid>
     )

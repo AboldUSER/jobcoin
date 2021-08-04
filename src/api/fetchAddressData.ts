@@ -17,15 +17,7 @@ export const fetchAddressData = async (accountName: string) => {
         const { data: response } = await axios.get<IAddressApiResponse>(
             `http://jobcoin.gemini.com/splatter-washtub/api/addresses/${accountName}`
         );
-     
-        const accountBalance = response.balance;
-
-        const accountTransactions = response.balance;
-    
-        console.log(accountBalance);
-        console.log(accountTransactions);
-        
-        return response;    
+        return response;
     } catch (err) {
         console.error(err);
     }

@@ -1,18 +1,20 @@
 import React from 'react';
-import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useQuery } from 'react-query';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import { UserContext } from './context/address-context-component';
+import { IAddressApiResponse, fetchAddressData } from '../api/fetchAddressData';
 
 
 interface IFormInputs {
     accountName: string;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         minWidth: 275,
         color: '#363533',
@@ -32,39 +34,53 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignInComponent: React.FunctionComponent = (): any => {
-
-    const history = useHistory();
+const SignInComponent = (): any => {
 
     const classes = useStyles();
 
-    const [formInput, setFormInput] = useState<IFormInputs["accountName"]>('');
+    const { address, setAddress } = React.useContext(UserContext);
+
+    const history = useHistory();
+
+    const [formInput, setFormInput] = React.useState<IFormInputs["accountName"]>('');
+
+    const { data, refetch, remove } = useQuery<IAddressApiResponse | undefined>([`addressData`, address], async () => await fetchAddressData(formInput), { refetchOnWindowFocus: false, enabled: false });
+
+    if (!data) {
+    } else if (data && data.transactions.length === 0) {
+        alert('Please enter valid and/or existing address')
+        remove()
+    } else {
+        setAddress(formInput);
+        history.push({ pathname: '/dashboard' });
+    }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormInput(event.target.value);
     }
 
-    const handleClick = (e: any) => {
+    const handleClick = async (e: any) => {
         e.preventDefault();
 
-
-
-        history.push({pathname: '/dashboard', state: { accountAddress: formInput }});
+        refetch();
 
     }
 
     return (
         <div>
             <Card className={classes.root}>
-                <CardContent><h3>Welcome! Sign In With Your Jobcoin Address</h3></CardContent>
+                <CardContent>
+                    <h3>Welcome!</h3>
+                    <h3>Sign In With Your Jobcoin Address</h3>
+                </CardContent>
                 <CardContent>
                     <form autoComplete="off" >
                         <TextField id="account-name" label="Jobcoin Address" variant="outlined" value={formInput} required onChange={handleChange} />
-                        {/* <Route render={({ history }) => ( */}
+
                         <Button className={classes.button} variant="contained" color="primary" type='submit' onClick={handleClick}>
                             Sign In
                         </Button>
-                        {/* )}/> */}
+
                     </form>
                 </CardContent>
             </Card>

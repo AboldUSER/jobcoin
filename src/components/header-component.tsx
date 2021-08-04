@@ -1,12 +1,13 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from 'react-router-dom';
 import Logo from '../assets/images/logo.png';
+import { UserContext } from '../components/context/address-context-component';
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,36 +16,50 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     appBar: {
       backgroundColor: '#001554',
-    "&.MuiAppBar-positionSticky": {
-      margin: "40px 20px 0px 20px",
-      width: "calc(100% - 40px)",
-      "& .MuiToolbar-root": {
-        color: "'#001554'",
-        "& .MuiButtonBase-root": {
-          fontSize: 24
-    }}}},
+      "&.MuiAppBar-positionSticky": {
+        margin: "40px 20px 0px 20px",
+        width: "calc(100% - 40px)",
+        "& .MuiToolbar-root": {
+          color: "'#001554'",
+          "& .MuiButtonBase-root": {
+            fontSize: 24
+          }
+        }
+      }
+    },
     menuButton: {
       marginRight: theme.spacing(2),
     },
     title: {
-      flexGrow: 1,
+      marginLeft: 10,
     },
     logo: {
       maxWidth: 50,
+    },
+    toolbarButtons: {
+      marginLeft: 'auto',
     }
   }),
 );
 
 export default function ButtonAppBar() {
 
-  const history = useHistory();
-
   const classes = useStyles();
 
-  const handleClick = (e: any) => {
+  const history = useHistory();
+
+  const { address, setAddress } = React.useContext(UserContext);
+
+  const logInButtonStatus = (address === '' ? false : true);
+
+  const logOutButtonStatus = (address === '' ? true : false);
+
+  const handleClick = async (e: any) => {
     e.preventDefault();
 
-    history.push({pathname: '/'});
+    await setAddress('');
+
+    await history.push({ pathname: '/' });
   }
 
   return (
@@ -55,7 +70,10 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.title}>
             JobCoin
           </Typography>
-          <Button color="inherit" onClick={handleClick}>Log Out</Button>
+          <div className={classes.toolbarButtons}>
+            <Button color="inherit" disabled={logInButtonStatus} onClick={handleClick}>Log In</Button>
+            <Button color="inherit" disabled={logOutButtonStatus} onClick={handleClick}>Log Out</Button>
+          </div>
         </Toolbar>
       </AppBar>
     </div>

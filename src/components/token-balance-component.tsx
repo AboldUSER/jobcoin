@@ -1,19 +1,13 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 
-
 interface ITokenBalanceProps {
-    accountName: string;
-    balance?: string;
+    balance: string;
 }
 
-// interface ITokenBalanceState {
-//     balance: string | undefined;
-// }
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         minWidth: 275,
         color: '#363533',
@@ -30,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TokenBalanceComponent = ({ accountName, balance }: ITokenBalanceProps) => {
+const TokenBalanceComponent = ({ balance }: ITokenBalanceProps) => {
 
     const classes = useStyles();
 
@@ -38,7 +32,7 @@ const TokenBalanceComponent = ({ accountName, balance }: ITokenBalanceProps) => 
         <div>
             <Card className={classes.root}>
                 <CardContent><h2>Token Balance</h2>
-                    <h4>{balance}</h4></CardContent>
+                    <h4>{parseFloat(balance).toFixed(2)}</h4></CardContent>
             </Card>
         </div>
     )
